@@ -3,18 +3,18 @@ require 'information/information.php';
 require 'prepare/prepare.php';
 require 'information/debug.php';
 
-//$prepare->debug=true;
-//$debug=new debug;
-
-
-
-//$imagefile='information/sizes/samples/ipad3.png';
-$imagefile='information/sizes/samples/iphone4.png';
+if(!isset($argv[1]))
+	$imagefile='information/sample.png';
+else
+	$imagefile=$argv[1];
 
 $information=new information($imagefile);
 $prepare=new prepare($information->folder);
-print_r($information);
+
+
 //$information->debug=true;
+//$prepare->debug=true;
+//$debug=new debug;
 
 $rack=$prepare->tilesplitter($information->inputim,$information->rackxlist,$information->sizes->racktilesize,$information->sizes->racky); //Hent spillerens brikker
 
@@ -24,15 +24,10 @@ if(isset($debug))
 	echo '<br>';
 }
 
-//$information->ylist=$prepare->tilelist($information->sizes->fromtop,$information->sizes->tilesize,$information->sizes->tilespacing,15); //Lag liste over alle rader
-//$information->xlist=$prepare->tilelist($information->sizes->fromleft,$information->sizes->tilesize,$information->sizes->tilespacing,15); //Lag liste over alle kolonner
-
-
 $letters=array();
 foreach($information->ylist as $ykey=>$y)
 {
-
-	$images=$prepare->tilesplitter($information->inputim,$information->xlist,$information->sizes->tilesize,$y); //936y
+	$images=$prepare->tilesplitter($information->inputim,$information->xlist,$information->sizes->tilesize,$y); //Hent en rad med brikker
 	if(isset($debug))
 	{
 		$debug->displayimages($images,$y);
@@ -40,20 +35,28 @@ foreach($information->ylist as $ykey=>$y)
 		echo '<br>';
 	}
 	$templetters=$prepare->sorttiles($images,$information->folder,$ykey);
-	if($templetters!==false)
+	if($templetters!==false) //Bare legg til linjer som inneholder bokstaver
 		$letters=$letters+$templetters;
 }
 
-$debug=new debug;
+
 if(isset($debug))
+{
 	$debug->displayimages($letters);
-		echo '<br>';
+	echo '<br>';
+}
 
 include 'getblack.php';
 
 foreach ($letters as $key=>$letter)
 {
-	echo $prepare->ocr($blackletters[$key]=getblack($letter),$information->folder."tekst/$key")."<br>\n";
+	list($blackletters[$key],$blankletters[$key])=getblack($letter);
+	$ocrletters[$key]=$prepare->ocr($blackletters[$key],$information->folder."tekst/$key");
 }
 if(isset($debug))
-	$debug->displayimages($blackletters,'black');
+{
+	$debug->displayimages($blackletters,'black',$ocrletters);
+	var_dump($blankletters);
+}
+include 'analyze.php';
+print_r(analyze($ocrletters,$blankletters,$information->tiles));

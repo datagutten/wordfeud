@@ -11,6 +11,7 @@ class information
 	public $ylist;
 	public $rackxlist;
 	public $folder;
+	public $tiles=array('A'=>7,'B'=>3,'C'=>1,'D'=>5,'E'=>9,'F'=>4,'G'=>4,'H'=>3,'I'=>6,'J'=>2,'K'=>4,'L'=>5,'M'=>3,'N'=>6,'O'=>4,'P'=>2,'R'=>7,'S'=>7,'T'=>7,'U'=>3,'V'=>3,'W'=>1,'Y'=>1,'Æ'=>1,'Ø'=>2,'Å'=>2,'blank'=>2);
 	public function __construct($imagefile)
 	{
 		$this->fileinfo=pathinfo($imagefile);
@@ -58,23 +59,5 @@ class information
 		}
 		return $ylist;
 	}
-	/*public function racksplitter()
-	{
-		imagepng($this->rack,'rack.png');
-		echo '<img src="rack.png" /><br />';
-		$fromleft=1;
-		for($i=0; $i<=6; $i++)
-		{
-			$tile=imagecreatetruecolor($this->sizes->racktilesize,$this->sizes->racktilesize);
-			//echo $fromleft=($this->sizes->racktilesize+$this->sizes->rackspacing)*$i;
-			echo $fromleft;
-			echo "\n";
-			imagecopy($tile,$this->rack,0,0,$fromleft,0,$this->sizes->racktilesize,$this->sizes->racktilesize);
-			imagepng($tile,"tile_$i.png",9);
-
-			echo "<img src=\"tile_$i.png\" />\n";
-			$fromleft=$fromleft+$this->sizes->racktilesize+$this->sizes->rackspacing;
-		}
-	}*/
 
 }
