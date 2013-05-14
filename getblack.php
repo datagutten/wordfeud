@@ -15,7 +15,7 @@ imagefill($letter,0,0,$white);
 
 $point=imagecreatetruecolor($tilesize,$tilesize); //Lag bilde for poenget
 imagefill($point,0,0,imagecolorallocate($point,255,255,255)); //Fyll med farge
-$pointhit=false; //Opprett variabelen pointhit
+$isblank=true; //Opprett variabelen pointhit
 for($y=2; $y<imagesy($im); $y++)
 {
 	for($x=2; $x<imagesx($im); $x++)
@@ -29,37 +29,18 @@ for($y=2; $y<imagesy($im); $y++)
 		//echo "$x:$y - $rgb: $r, $g, $b<br>\n";
 		if($rgb<=5300600) //5260600  5300600
 		{
-		//       dst_im, src_im,dst_x,dst_y,src_x,src_y,src_w,src_h 
-		if($y<=40 && $x<=25) //Hent bokstaven uten poeng
-			imagecopy($letter,$im   ,$x    ,$y    ,$x   ,$y    ,1  ,1);
-		elseif($y<=30 && $x<=38) //Hent poenget
-		{
-			imagecopy($point,$im   ,$x    ,$y    ,$x   ,$y    ,1  ,1);
-			$pointhit=true;
+			//       dst_im, src_im,dst_x,dst_y,src_x,src_y,src_w,src_h 
+			if($y<=40 && $x<=27) //Hent bokstaven uten poeng
+				imagecopy($letter,$im   ,$x    ,$y    ,$x   ,$y    ,1  ,1);
+			elseif($y<=30 && $x<=38) //Sjekk om bokstaven gir poeng
+			{
+				imagecopy($point,$im   ,$x    ,$y    ,$x   ,$y    ,1  ,1);
+				$isblank=false;
+			}
 		}
-		}
-		
-
-		//imagepng($tile,$outdir.$xkey."-".$ykey.'.png');
-		//imagedestroy($tile);
-		/*echo $xlist+1;
-		echo " - ";
-		echo $xlist+42;
-		echo "<br>";*/
 	}
 }
-//header('Content-type: image/png');
-//imagepng ($letter);
-/*if(file_exists($outfile))
-	unlink($outfile);
 
-imagepng($letter,$outfile);
-
-if(file_exists($outfile_point))
-	unlink($outfile_point);
-if($pointhit)
-	imagepng($point,$outfile_point);*/
-
-return $letter;
+return array($letter,$isblank);
 }
 ?>
