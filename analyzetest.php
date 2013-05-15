@@ -3,11 +3,10 @@ require 'information/information.php';
 require 'prepare/prepare.php';
 require 'information/debug.php';
 
-if(!isset($argv[1]))
-	$imagefile='information/sample.png';
-else
-	$imagefile=$argv[1];
+$imagefile=$argv[1];
 
+if(!file_exists($imagefile))
+	die("Finner ikke $imagefile\n");
 $information=new information($imagefile);
 $prepare=new prepare($information->folder);
 
@@ -51,7 +50,8 @@ include 'getblack.php';
 foreach ($letters as $key=>$letter)
 {
 	list($blackletters[$key],$blankletters[$key])=getblack($letter);
-	$ocrletters[$key]=$prepare->ocr($blackletters[$key],$information->folder."tekst/$key");
+	imagepng($blackletters[$key],$information->folder."letters_black/$key");
+	$ocrletters[$key]=$prepare->ocr($information->folder."letters_black/$key",$information->folder."letters_ocr/$key");
 }
 if(isset($debug))
 {

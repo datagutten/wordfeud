@@ -14,7 +14,7 @@ else
 		
 	$return=shell_exec("$command 2>&1"); //Prøv kommandoen
 	//var_dump($return);
-	if(strpos($return,'not found'))
+	if(strpos($return,'not found') || strpos($return,'gjenkjennes ikke som en intern eller ekstern kommando'))
 		$notfound[]=$command; //Legg den på listen over kommandoer som ikke ble funnet
 	}
 	
