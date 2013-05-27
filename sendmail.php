@@ -1,17 +1,16 @@
 ﻿<?php
-require("../../lib/PHPMailer_5.2.0/class.phpmailer.php");
+require("PHPMailer/class.phpmailer.php");
 function sendmail($recipient,$subject,$body)
 {
 $mail = new PHPMailer();
-
+require 'config.php';
 $mail->IsSMTP();                                      // set mailer to use SMTP
-$mail->Host = "smtp.online.no";  // specify main and backup server
-$mail->SMTPAuth = false;     // turn on SMTP authentication
-$mail->Port = 587;
-$mail->From = "wordfeud@datagutten.net";
+$mail->Host = $smtp_server;
+$mail->SMTPAuth = false;
+$mail->Port = $smtp_port;
+$mail->From = $from_address;
 $mail->FromName = "Wordfeud analyzer";
 $mail->AddAddress($recipient);
-//$mail->AddReplyTo("info@example.com", "Information");
 
 $mail->WordWrap = 50;                                 // set word wrap to 50 characters
 $mail->IsHTML(true);                                  // set email format to HTML
@@ -24,10 +23,8 @@ if(!$mail->Send())
 {
    echo "Message could not be sent. <p>";
    echo "Mailer Error: " . $mail->ErrorInfo;
-   $return=false;
+   return false;
 }
 else
-	$return=true;
-
-return $return;
+	return true;
 }
