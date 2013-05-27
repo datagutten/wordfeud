@@ -1,7 +1,10 @@
-<?Php session_start(); 
+<?Php
+//Script som henter bilder av spill fra en gmailadresse og analyserer de
+session_start(); 
 include 'dependcheck.php';
 depend('munpack');
 require 'config.php';
+$mbox = imap_open($server='{'.$imap_server.'/imap/ssl}INBOX', $imap_user,$imap_password); //Åpne mailboksne
 $headers = imap_headers($mbox);
 include 'analyze.php';
 include 'sendmail.php';
