@@ -50,13 +50,20 @@ include 'getblack.php';
 foreach ($letters as $key=>$letter)
 {
 	list($blackletters[$key],$blankletters[$key])=getblack($letter);
-	imagepng($blackletters[$key],$information->folder."letters_black/$key");
-	$ocrletters[$key]=$prepare->ocr($information->folder."letters_black/$key",$information->folder."letters_ocr/$key");
+	imagepng($blackletters[$key],$information->folder."letters_black/$key.png");
+	$ocrletters[$key]=$prepare->ocr($information->folder."letters_black/$key.png",$information->folder."letters_ocr/$key");
 }
 if(isset($debug))
 {
 	$debug->displayimages($blackletters,'black',$ocrletters);
 	var_dump($blankletters);
 }
-include 'analyze.php';
-print_r(analyze($ocrletters,$blankletters,$information->tiles));
+$tiles=$information->tiles;
+	foreach ($ocrletters as $key=>$letter)
+	{
+		if(!$blankletters[$key])
+			$tiles[$letter]--;
+		else
+			$tiles['blank']--;
+	}
+	print_r($tiles);
