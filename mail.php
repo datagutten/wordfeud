@@ -1,49 +1,78 @@
 <?Php
 //Script som henter bilder av spill fra en gmailadresse og analyserer de
-session_start(); 
-include 'dependcheck.php';
-depend('munpack');
+
+require 'dependcheck.php';
+//depend('munpack');
+
 require 'config.php';
-$mbox = imap_open($server='{'.$imap_server.'/imap/ssl}INBOX', $imap_user,$imap_password); //Åpne mailboksne
+require "PHPMailer/class.phpmailer.php";
+require 'analyze.php';
+//require 'sendmail.php';
+
+$mail = new PHPMailer();
+$mail->IsSMTP();                                      // set mailer to use SMTP
+$mail->Host = $smtp_server;
+$mail->SMTPAuth = false;
+$mail->Port = $smtp_port;
+$mail->From = $from_address;
+$mail->FromName = "Wordfeud analyzer";
+$mail->WordWrap = 50;                                 // set word wrap to 50 characters
+$mail->IsHTML(true);                                  // set email format to HTML
+
+if(!file_exists('mail')) //Lag mappe for mottatte mailer
+	mkdir('mail');
+
+$mbox = imap_open($server='{'.$imap_server.'/imap/ssl}INBOX', $imap_user,$imap_password); //Åpne mailboksen
 $headers = imap_headers($mbox);
-include 'analyze.php';
-include 'sendmail.php';
+
 
 foreach($headers as $message=>$header)
 {
-	$message=$message+1;
+	$message++;
 	$header=imap_headerinfo($mbox,$message);
+	//print_r($header);
+
+	//die();
+	$folder=$header->from[0]->mailbox.'_'.$header->from[0]->host.'_'.$header->udate; //Lag mappenavn
+	mkdir('mail/'.$folder); //Opprett mappe
 	preg_match('^\<(.*)\>^',$header->reply_toaddress,$result);
 	$replyto=$result[1]; //Finn returadressen
-	imap_savebody($mbox,'mail/body.eml',1);
-	exec("munpack -C mail -fq body.eml",$output);
-	unlink('mail/body.eml');
-	print_r($output);
-if($output[0]!='Did not find anything to unpack from body.eml') {
-    foreach ($output as $attach) {
+	imap_savebody($mbox,$eml="mail/$folder/body.eml",1);
+
+	exec("munpack -C mail/$folder -fq body.eml 2>&1",$output); //filnavnet i siste argument er relativt til banen i første argument
+	unlink($eml);
+
+if($output[0]!='Did not find anything to unpack from body.eml')
+{
+    foreach ($output as $attach)
+	{
         $pieces = explode(" ", $attach);
-		if(strpos(strtolower($pieces[0]),'.png')) //Sjekk at det er png bilde
+
+		if(preg_match('^(.+) \(image/([a-z]+)\)^',$attach,$fileinfo)) //Sjekk at det er bilde vedlagt
 		{
-			unlink('mail/body.eml');
-			$file="mail/".str_replace('@','_',$replyto)."--".$header->udate.".png";
-			rename('mail/'.$pieces[0],$file);
+			//$file="mail/".str_replace('@','_',$replyto)."--".$header->udate.".png";
+			$file="mail/$folder/$folder.png";
+			rename("mail/$folder/{$fileinfo[1]}",$file);
 			echo $file."<br>";
 			break;
 		}
-			
-        }
-		$analysis=analyze($file);
-		$send=sendmail($replyto,'Wordfeud analyze '.date('dmy H:i',$header->udate),$analysis);
-		if($send)
-			imap_delete($mbox,$message); //Slett mailen
-		else
-			echo 'Feil ved sending av melding'."\n";
-			//var_dump($send);
-		echo $analysis;
+	
+	}
+	$analysis=analyze($file);
+	
+	$mail->Subject='Wordfeud analyze '.date('dmy H:i',$header->udate);
+	$mail->Body=$analysis;
+	$mail->AddAddress($replyto);
 
-    }
+	if(!$mail->Send())
+	{
+	   echo "Feil ved sending av melding: {$mail->ErrorInfo}\n";
+	}
 	else
 		imap_delete($mbox,$message); //Slett mailen
+    }
+else
+	imap_delete($mbox,$message); //Slett mailen
 
 
 
