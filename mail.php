@@ -3,21 +3,10 @@
 
 require 'dependcheck.php';
 //depend('munpack');
-
-require 'config.php';
 require "PHPMailer/class.phpmailer.php";
-require 'analyze.php';
-//require 'sendmail.php';
-
 $mail = new PHPMailer();
-$mail->IsSMTP();                                      // set mailer to use SMTP
-$mail->Host = $smtp_server;
-$mail->SMTPAuth = false;
-$mail->Port = $smtp_port;
-$mail->From = $from_address;
-$mail->FromName = "Wordfeud analyzer";
-$mail->WordWrap = 50;                                 // set word wrap to 50 characters
-$mail->IsHTML(true);                                  // set email format to HTML
+require 'config.php';
+require 'analyze.php';
 
 if(!file_exists('mail')) //Lag mappe for mottatte mailer
 	mkdir('mail');
@@ -46,8 +35,6 @@ if($output[0]!='Did not find anything to unpack from body.eml')
 {
     foreach ($output as $attach)
 	{
-        $pieces = explode(" ", $attach);
-
 		if(preg_match('^(.+) \(image/([a-z]+)\)^',$attach,$fileinfo)) //Sjekk at det er bilde vedlagt
 		{
 			//$file="mail/".str_replace('@','_',$replyto)."--".$header->udate.".png";
@@ -55,22 +42,21 @@ if($output[0]!='Did not find anything to unpack from body.eml')
 			rename("mail/$folder/{$fileinfo[1]}",$file);
 			echo $file."<br>";
 			break;
-		}
-	
+		}	
 	}
-	$analysis=analyze($file);
-	
+
 	$mail->Subject='Wordfeud analyze '.date('dmy H:i',$header->udate);
-	$mail->Body=$analysis;
-	$mail->AddAddress($replyto);
+	$mail->Body=analyze($file); //Analyser spillet og bruk resultatet som tekst i mailen
+	$mail->AddAddress($replyto); //Send svar til oppgitt svaradresse
 
 	if(!$mail->Send())
-	{
-	   echo "Feil ved sending av melding: {$mail->ErrorInfo}\n";
-	}
+		echo "Feil ved sending av melding: {$mail->ErrorInfo}\n";
 	else
+	{
+		echo "Meldingen ble sendt\n";
 		imap_delete($mbox,$message); //Slett mailen
-    }
+	}
+}
 else
 	imap_delete($mbox,$message); //Slett mailen
 
