@@ -5,7 +5,7 @@ function analyze($imagefile)
 	if(!file_exists($imagefile))
 		die("Finner ikke $imagefile\n");
 	require 'information/information.php';
-	require 'prepare/prepare.php';
+	require 'prepare.php';
 	require 'information/debug.php';
 	
 	$information=new information($imagefile);
