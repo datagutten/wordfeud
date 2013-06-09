@@ -1,3 +1,6 @@
 [submodule "PHPMailer"]
 	path = PHPMailer
 	url = git://github.com/PHPMailer/PHPMailer.git
+[submodule "tools"]
+	path = tools
+	url = git@github.com:datagutten/tools.git

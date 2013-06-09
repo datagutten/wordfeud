@@ -1,8 +1,10 @@
 <?Php
 //Script som henter bilder av spill fra en gmailadresse og analyserer de
 
-require 'dependcheck.php';
-//depend('munpack');
+require 'tools/dependcheck.php';
+$dependcheck=new dependcheck;
+if($dependcheck->depend('munpack')!==true)
+	die("munpack er nødvendig for å hente vedlegg fra mailer\n");
 require "PHPMailer/class.phpmailer.php";
 $mail = new PHPMailer();
 require 'config.php';
