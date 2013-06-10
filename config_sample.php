@@ -13,4 +13,5 @@ $mail->IsSMTP();                                      // set mailer to use SMTP
 $mail->FromName = "Wordfeud analyzer";
 $mail->WordWrap = 50;                                 // set word wrap to 50 characters
 $mail->IsHTML(true);                                  // set email format to HTML
+$mail->SetLanguage('no');
 ?>
