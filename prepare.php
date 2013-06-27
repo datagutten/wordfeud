@@ -3,9 +3,14 @@
 class prepare
 {
 	public $debug=false;
+	public $depend;
 	function __construct($folder)
 	{
 		$this->makefolder($folder);
+		require 'tools/dependcheck.php';
+		$this->depend=new dependcheck;
+		if($this->depend->depend('tesseract')!==true)
+			die("tesseract er nødvendig for å hente bokstavene");
 	}
 	
 	private function makefolder($folder)
@@ -29,11 +34,11 @@ class prepare
 		return $tileimages;
 	}
 
-	private $colorlimits=array('empty_slots'=>array(2600000,2800000),
-							'DW'=>array(0xB07010,0xB77320), //Oppdatert 080513
+	private $colorlimits=array('empty_slots'=>array(0x202020,0x2f2f35), //Oppdatert 270613
+							'DW'=>array(0xB07010,0xbf761a), //Oppdatert 270613
 							'TW'=>array(0x793539,0x843d41), //Oppdatert 080513
-							'DL'=>array(0x709865,0x73A960), //Bør fungere
-							'TL'=>array(0x4660a0,0x4761a5), //Oppdatert 080513
+							'DL'=>array(0x6b9b60,0x759b68), //Oppdatert 270613
+							'TL'=>array(0x4060a0,0x4b5eaa), //Oppdatert 270613
 							'letters'=>array(0,0));
 
 	
