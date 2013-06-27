@@ -18,10 +18,14 @@ class information
 		$this->folder='output/'.$this->fileinfo['filename'].'/';
 		if(!file_exists($imagefile))
 			die("Finner ikke $imagefile");
-		elseif($this->fileinfo['extension']!='png')
-			die("Bildet må være i png format");
-		
-		$this->inputim=imagecreatefrompng($imagefile);
+
+		if($this->fileinfo['extension']=='png')
+			$this->inputim=imagecreatefrompng($imagefile);
+		elseif($this->fileinfo['extension']=='jpg' || $this->fileinfo['extension']=='jpeg')
+			$this->inputim=imagecreatefromjpeg($imagefile);
+		else
+			die("{$this->fileinfo['extension']} er ikke en støttet filtype");
+
 		$this->width=imagesx($this->inputim);
 		$this->height=imagesy($this->inputim);
 		$this->device=$this->selectdevice(array($this->width,$this->height)); //Finn enhetstype
@@ -37,9 +41,9 @@ class information
 	private function selectdevice($size)
 	{
 		if($size[0]==768 && $size[1]=1024)
-			$this->device='ipad2_large';
-		elseif($size[0]==1136 && $size[1]==686)
-			$this->device='bluestacks';
+			$this->device='ipad2_portrait';
+		elseif($size[0]==1024 && $size[1]==768)
+			$this->device='ipad2_landscape';
 		elseif($size[0]==640 && $size[1]==960)
 			$this->device='iphone4';
 		elseif($size[0]==1536 && $size[1]==2048)
