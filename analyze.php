@@ -11,8 +11,6 @@ function analyze($imagefile)
 	$information=new information($imagefile);
 	$prepare=new prepare($information->folder);
 	
-	
-	//$information->debug=true;
 	//$prepare->debug=true;
 	//$debug=new debug;
 	
@@ -56,8 +54,24 @@ function analyze($imagefile)
 	}
 	if(isset($debug))
 	{
-		$debug->displayimages($blackletters,'black',$ocrletters);
-		var_dump($blankletters);
+		$y='';
+		echo 'Svarte bokstaver:<br>';
+		foreach($blackletters as $key=>$letter)
+		{
+			$prevy=$y;
+			$y=substr($key,strpos($key,'-')+1);
+			$row[$key]=$letter;
+			if($y!=$prevy)
+			{
+				$debug->displayimages($row,'black',$ocrletters);
+				echo '<br>';
+				unset($row);
+			}
+		}
+		echo '<br>Blanke:<br>';
+		echo nl2br(print_r($blankletters,true));
+		echo 'OCR:<br>';
+		echo nl2br(print_r($ocrletters,true));
 	}
 	$tiles=$information->tiles;
 		foreach ($ocrletters as $key=>$letter)
