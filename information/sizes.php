@@ -34,4 +34,21 @@ class ipad3
 
 
 }
+class ipad2_landscape
+{
+	//Info om brikker på brettet
+	public $tilesize=38;
+	public $tilespacing=2;
+	//Info om brettet
+	public $boardsize=600;
+	public $fromtop=65;
+	public $fromleft=374;
+	//Info om rack
+	public $rackx=534;
+	public $racky=675;
+	public $racktilesize=38;
+	public $rackwidth=278;
+	public $rackspacing=2;
+	
+}
 ?>
