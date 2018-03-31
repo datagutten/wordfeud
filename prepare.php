@@ -35,10 +35,10 @@ class prepare
 	}
 
 	private $colorlimits=array('empty_slots'=>array(0x202020,0x2f2f35), //Oppdatert 270613
-							'DW'=>array(0xB07010,0xbf761a), //Oppdatert 270613
+							'DW'=>array(0xac7010,0xbf7d37), //Oppdatert 310318
 							'TW'=>array(0x793539,0x843d41), //Oppdatert 080513
 							'DL'=>array(0x6b9b60,0x759b68), //Oppdatert 270613
-							'TL'=>array(0x4060a0,0x4b5eaa), //Oppdatert 270613
+							'TL'=>array(0x40609d,0x4d65aa), //Oppdatert 310318
 							'letters'=>array(0,0));
 
 	
